@@ -6,6 +6,8 @@
 checkerImgNames = {'../data/sample/calibration/camera-calibration1.pgm', '../data/sample/calibration/camera-calibration2.pgm'};
 
 %% Calibrate camera and desk plane
+% camParams: matlab cameraParameters structure
+% horizontalPlane: 4x1 vector
 [camParams, horizontalPlane] = calibrateCameraGroundPlane(...
     checkerImgNames, 23);
 

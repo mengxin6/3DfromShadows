@@ -1,7 +1,11 @@
 function [camParams, horizontalPlane] = calibrateCameraGroundPlane(...
     imNames, squareSizeInMM)
-% imNames is a cell array containing a string that specifies the full path
-% to a image.
+% Input:
+%  imNames is a cell array containing a string that specifies the full path
+%  to a image.
+% Output:
+%  camParams: matlab cameraParameters structure
+%  horizontalPlane: 4x1 vector
 
 % imagePoints is an M-by-2-by-numImages array of x-y coordinates
 % boardSize specifies the checkerboard dimensions as [rows, cols] measured insquares.
@@ -24,8 +28,10 @@ camParams = estimateCameraParameters(imagePoints,worldPoints);
 
 %% Calculate the coordinate vector of the ground plane (plane of the checker
 % board)
-% TODO
-horizontalPlane = zeros(4,1);
+A = [worldPoints(:,1)-mean(worldPoints(:,1)), worldPoints(:,2)-mean(worldPoints(:,2)), zeros(size(worldPoints,1),1)];
+[~,~,V]=svd(A,0);
+d = 0 - [worldPoints(1,:), 0]*V(:,end);
+horizontalPlane=vertcat(V(:,end), d);
 
 end
 
