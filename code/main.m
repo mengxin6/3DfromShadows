@@ -4,15 +4,22 @@
 
 %% Load data
 checkerImgNames = {'../data/sample/calibration/camera-calibration1.pgm', '../data/sample/calibration/camera-calibration2.pgm'};
+lightImgNames = {'../data/sample/calibration/light-calibration1.pgm', ...
+    '../data/sample/calibration/light-calibration2.pgm',...
+    '../data/sample/calibration/light-calibration3.pgm',...
+    '../data/sample/calibration/light-calibration4.pgm'};
+checkerSquareSizeInMM = 23;
+pencilLenInMM = 76;
 
 %% Calibrate camera and desk plane
 % camParams: matlab cameraParameters structure
 % horizontalPlane: 4x1 vector
 [camParams, horizontalPlane] = calibrateCameraGroundPlane(...
-    checkerImgNames, 23);
+    checkerImgNames, checkerSquareSizeInMM);
 
 %% Calibrate light source location
-% TODO
+% lightLoc: 3x1 vector
+lightLoc = inferLightSourceLocation(imNames, camParams, pencilLenInMM);
 
 %% 3D from scan
 % TODO
