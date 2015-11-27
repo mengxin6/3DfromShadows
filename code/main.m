@@ -3,10 +3,11 @@
 % Carnegie Mellon University 
 
 %% Load data
-% TODO
+checkerImgNames = {'../data/sample/calibration/camera-calibration1.pgm', '../data/sample/calibration/camera-calibration2.pgm'};
 
 %% Calibrate camera and desk plane
-% TODO
+[camParams, horizontalPlane] = calibrateCameraGroundPlane(...
+    checkerImgNames, 23);
 
 %% Calibrate light source location
 % TODO
