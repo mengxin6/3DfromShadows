@@ -42,7 +42,7 @@ T = B + [zeros(N,2) repmat(pencilLenInMM, N, 1)];
 
 % Infer line on which point light source lies
 ln = Ts - T;
-ln = ln ./ repmat(sum(ln.^2, 2), 1, 3); % @DEBUG:looks weird down here?
+ln = normr(ln);
 R = zeros(3,3); q = size(3,1);
 for i = 1:N
     R = R +(eye(3) - ln(i,:)'*ln(i,:));
