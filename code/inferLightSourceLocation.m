@@ -41,12 +41,6 @@ Ts = [Ts zeros(N,1)];
 T = B + [zeros(N,2) repmat(pencilLenInMM, N, 1)];
 
 % Infer line on which point light source lies
-ln = Ts - T;
-ln = normr(ln);
-R = zeros(3,3); q = size(3,1);
-for i = 1:N
-    R = R +(eye(3) - ln(i,:)'*ln(i,:));
-    q = q + (eye(3) - ln(i,:)'*ln(i,:))*T(i,:)';
-end
-lightLoc = R\q;
+ln = normr(Ts - T);
+lightLoc = linesIntersectionPoint(T, ln);
 end
