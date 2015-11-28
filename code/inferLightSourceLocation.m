@@ -12,25 +12,41 @@ b = zeros(N,2);
 ts = zeros(N,2);
 idx = 1;
 for i = imNames
-    f = imshow(imread(imNames{i})); title('Click on bottom of pencil and press enter')
+    f = figure(1);
+    J = undistortImage(imread(i{1}), cameraParams);
+    imshow(J); title('Click on bottom of pencil and press enter')
     [bx, by] = getpts(f);
-    b(idx,1) = bx(1); b(idx,2) = by(1);
-    f = imshow(imread(imNames{i})); title('Click on top of shadow and press enter')
+    b(idx,1) = bx(end); b(idx,2) = by(end);
+    idx = idx+1;
+end
+idx = 1;
+for i = imNames
+    f = figure(1);
+    J = undistortImage(imread(i{1}), cameraParams);
+    imshow(J); title('Click on top of shadow and press enter')
     [tsx, tsy] = getpts(f);
-    ts(idx,1) = tsx(1); ts(idx,2) = tsy(1);
+    ts(idx,1) = tsx(end); ts(idx,2) = tsy(end);
     idx = idx+1;
 end
 
 % Infer B, Ts in 3D
-B = pointsToWorld(cameraParams, mean(cameraParams.RotationVectors,1),...
+B = pointsToWorld(cameraParams, mean(cameraParams.RotationMatrices,3),...
    mean(cameraParams.TranslationVectors,1), b);
-Ts = pointsToWorld(cameraParams, mean(cameraParams.RotationVectors,1),...
+B = [B zeros(N,1)];
+Ts = pointsToWorld(cameraParams, mean(cameraParams.RotationMatrices,3),...
    mean(cameraParams.TranslationVectors,1), ts);
+Ts = [Ts zeros(N,1)];
 
 % Infer T from pencil length
-T = Ts + repmat(pencilLenInMM, N, 3);
+T = B + [zeros(N,2) repmat(pencilLenInMM, N, 1)];
 
 % Infer line on which point light source lies
-% TODO
-
+ln = Ts - T;
+ln = ln ./ repmat(sum(ln.^2, 2), 1, 3); % @DEBUG:looks weird down here?
+R = zeros(3,3); q = size(3,1);
+for i = 1:N
+    R = R +(eye(3) - ln(i,:)'*ln(i,:));
+    q = q + (eye(3) - ln(i,:)'*ln(i,:))*T(i,:)';
+end
+lightLoc = R\q;
 end

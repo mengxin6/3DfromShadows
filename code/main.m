@@ -19,7 +19,7 @@ pencilLenInMM = 76;
 
 %% Calibrate light source location
 % lightLoc: 3x1 vector
-lightLoc = inferLightSourceLocation(imNames, camParams, pencilLenInMM);
+lightLoc = inferLightSourceLocation(lightImgNames, camParams, pencilLenInMM);
 
 %% 3D from scan
 % TODO
