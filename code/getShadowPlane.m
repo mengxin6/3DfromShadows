@@ -1,10 +1,9 @@
-function [shadowPlanePts] = getShadowPlane(edgeLine2d, lightLoc, cameraParams)
+function [shadowPlanePts] = getShadowPlane(edgeLine, lightLoc, cameraParams)
 % Calculates the shadow plane by finding 2 3d points on the intersection of 
 % shadow plane and horizontal plane.
 % Input:
-%  edgeLine2d: 4xn matrix where n is the number of frames from the scan;
-%              each column is [x1 y1 x2 y2]' that specifies 2 points on the
-%              2d line
+%  edgeLine2d: 3xn matrix where n is the number of frames from the scan;
+%              each column is [a b c]' that specifies line ax+by+c=0
 %  cameraLoc: 3x1 vector specifying the location of light source
 %  cameraParams: a camera parameter structure
 % Output:
@@ -13,6 +12,10 @@ function [shadowPlanePts] = getShadowPlane(edgeLine2d, lightLoc, cameraParams)
 %                  specifies 3 points on the shadow plane
 
 N = size(edgeLine2d,2);
+% TODO
+fprintf('TODO: implement point selection!\n');
+edgeLine2d = zeros(4,N);
+
 pts3d = pointsToWorld(cameraParams, mean(cameraParams.RotationMatrices,3),...
    mean(cameraParams.TranslationVectors,1), reshape(edgeLine2d,2,[])');
 shadowPlanePts = zero(9,N);

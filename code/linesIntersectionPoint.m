@@ -5,6 +5,7 @@ function point = linesIntersectionPoint(linept, linenormal)
 % linenormal: Nx3, each row is a normalized vector that specifies the
 %             line's direction
 
+N = size(linept,1);
 R = zeros(3,3); q = size(3,1);
 for i = 1:N
     R = R +(eye(3) - linenormal(i,:)'*linenormal(i,:));
