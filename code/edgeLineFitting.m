@@ -1,4 +1,7 @@
 function edgeLine=edgeLineFitting(spatialEdge)
+% Output: 
+%  edgeLine: 4xN matrix where each column are two points that fits on the 
+%            line
 numImages=size(spatialEdge,3);
 numberIterate=50;
 tol=1.5;
@@ -12,17 +15,19 @@ for i=1:numImages
     avgDistanceMin=100;
     for iteration=1:numberIterate
         randTwoPoints=edgePoints(randi(size(edgePoints,1),2,1),:);
-        [U, S V]=svd(randTwoPoints'*randTwoPoints);
+        [U, S, V]=svd(randTwoPoints'*randTwoPoints);
         sol=U(:,end);
         dist=abs(edgePoints*sol)/sqrt(sum(sol(1:2).^2));
         inlier=edgePoints(find(dist<tol),:);
         if size(inlier,1)>thr_minNumberInlier
         [U S V]=svd(inlier'*inlier);
         sol=U(:,end);
+        twoPtsOnLine = reshape(inlier(1:2,:)',[],1);
         avgDistance=mean(abs(inlier*sol)/sqrt(sum(sol(1:2).^2)));
         if avgDistance<avgDistanceMin
             avgDistanceMin=avgDistance;
-            edgeLine(:,i)=sol;
+%             edgeLine(:,i)=sol;
+            edgeLine(:,i) = twoPtsOnLine;
         end
     end
     end

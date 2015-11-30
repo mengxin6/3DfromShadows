@@ -28,7 +28,11 @@ pencilLenInMM = 76;
 lightLoc = inferLightSourceLocation(lightImgNames, camParams, pencilLenInMM);
 
 %% 3D from scan
-% TODO
+spatialEdge=findSpatialEdge(objectImages);
+edgeLine=edgeLineFitting(spatialEdge);
+shadowPlanePts = getShadowPlane(edgeLine, lightLoc, cameraParams);
+
+
 
 %% Merge scans (if multiple scans were made)
 % TODO
