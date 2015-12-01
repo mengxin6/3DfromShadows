@@ -17,7 +17,7 @@ for i = 1:N
     mat = zeros(2,size(x,1));
     idx = 1;
     for j = 1:size(x,1)
-        if abs(edgeLine(:,i)*[x(j); y(j); 1])/sqrt(sum(edgeLine(1:2,i).^2) > TOL
+        if abs(edgeLine(:,i)*[x(j); y(j); 1])/sqrt(sum(edgeLine(1:2,i).^2)) > TOL
             mat(:,idx) = [x(j); y(j)];
             idx = idx+1;
         end

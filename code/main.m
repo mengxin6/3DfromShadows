@@ -28,10 +28,14 @@ pencilLenInMM = 76;
 lightLoc = inferLightSourceLocation(lightImgNames, camParams, pencilLenInMM);
 
 %% 3D from scan
+for i = 1:size(objectImagePaths, 2)
+    objectImages(:,:,i) = undistortImage(objectImages(:,:,i), camParams);
+end
 spatialEdge=findSpatialEdge(objectImages);
 edgeLine=edgeLineFitting(spatialEdge);
 objpts = getObjectPts(spatialEdge,edgeLine);
-shadowPlanePts = getShadowPlane(edgeLine, lightLoc, cameraParams);
+shadowPlanePts = getShadowPlane(edgeLine, lightLoc, cameraParams, ...
+    size(objectImages,2), size(objectImages,1));
 % TODO: compute linear interpolation
 object3dpts = triangulate(object2dpts, shadowPlanePts, cameraParams);
 
