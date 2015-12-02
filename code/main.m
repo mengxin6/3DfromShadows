@@ -16,6 +16,7 @@ for i=1:size(objectImagePaths,2)
 end    
 checkerSquareSizeInMM = 23;
 pencilLenInMM = 76;
+loadPtsFrom = '../data/sample/lightCalib';
 
 %% Calibrate camera and desk plane
 % camParams: matlab cameraParameters structure
@@ -25,7 +26,7 @@ pencilLenInMM = 76;
 
 %% Calibrate light source location
 % lightLoc: 3x1 vector
-lightLoc = inferLightSourceLocation(lightImgNames, camParams, pencilLenInMM);
+lightLoc = inferLightSourceLocation(lightImgNames, camParams, pencilLenInMM, loadPtsFrom);
 
 %% 3D from scan
 for i = 1:size(objectImagePaths, 2)
