@@ -16,7 +16,7 @@ TOL = 10;
 N = size(spatialEdge,3);
 objpts = cell(1,N);
 for i = 1:N
-    [x,y] = find(spatialEdge(:,:,i)==1);
+    [y,x] = find(spatialEdge(:,:,i)==1);
     mat = zeros(2,size(x,1));
     idx = 1;
     for j = 1:size(x,1)

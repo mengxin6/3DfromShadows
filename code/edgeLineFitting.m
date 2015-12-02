@@ -8,7 +8,7 @@ tol=1.5;
 edgeLine=zeros(3,size(spatialEdge,3));
 for i=1:numImages
     if(sum(sum(spatialEdge(:,:,i)))>0)
-    [x,y]=find(spatialEdge(:,:,i));
+    [y,x]=find(spatialEdge(:,:,i));
     edgePoints=double([x,y]);
     edgePoints=[edgePoints,ones(size(edgePoints,1),1)];
     thr_minNumberInlier=size(edgePoints,1)/10;
