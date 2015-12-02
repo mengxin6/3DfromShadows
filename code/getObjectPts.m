@@ -9,7 +9,7 @@ function [objpts] = getObjectPts(spatialEdge,edgeLine)
 %  objpts: 1x(nframes-1) cell array, where cell i contains 2xKi matrix,
 %          denoting points on the image that are on the object to be
 %          scanned.
-TOL = 1.5;
+TOL = 10;
 N = size(spatialEdge,3);
 objpts = cell(1,N);
 for i = 1:N
@@ -17,12 +17,14 @@ for i = 1:N
     mat = zeros(2,size(x,1));
     idx = 1;
     for j = 1:size(x,1)
-        if abs(edgeLine(:,i)*[x(j); y(j); 1])/sqrt(sum(edgeLine(1:2,i).^2)) > TOL
+        if abs((edgeLine(:,i))'*[x(j); y(j); 1])/sqrt(sum(edgeLine(1:2,i).^2)) > TOL
             mat(:,idx) = [x(j); y(j)];
             idx = idx+1;
         end
     end
-    objpts{1,i} = mat(1:idx,:);
+    if idx~=1
+        objpts{1,i} = mat(:,1:idx-1);
+    end
 end
 
 end
