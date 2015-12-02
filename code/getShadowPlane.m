@@ -2,9 +2,9 @@ function [shadowPlanePts] = getShadowPlane(edgeLine, lightLoc, cameraParams, xma
 % Calculates the shadow plane by finding 2 3d points on the intersection of 
 % shadow plane and horizontal plane.
 % Input:
-%  edgeLine2d: 3xn matrix where n is the number of frames from the scan;
+%  edgeLine: 3xn matrix where n is the number of frames from the scan;
 %              each column is [a b c]' that specifies line ax+by+c=0
-%  cameraLoc: 3x1 vector specifying the location of light source
+%  lightLoc: 3x1 vector specifying the location of light source
 %  cameraParams: a camera parameter structure
 %  xmax: size of scan image in horizontal dimension
 % Output:
@@ -12,7 +12,7 @@ function [shadowPlanePts] = getShadowPlane(edgeLine, lightLoc, cameraParams, xma
 %                  scan; each column is [x1 y1 z1 x2 y2 z2 lx ly lz] that 
 %                  specifies 3 points on the shadow plane
 
-N = size(edgeLine2d,2);
+N = size(edgeLine,2);
 edgeLine2d = zeros(4,N);
 % find intersection of this line with the image boarder
 % intersecting with top & bottom boarder
@@ -25,14 +25,14 @@ edgeLine2d(4,nonhorizontal) = ymax;
 horizontal = (edgeLine(1,:)==0 | edgeLine2d(1,:)<1 | edgeLine2d(1,:)>xmax ...
     | edgeLine2d(3,:) < 1 | edgeLine2d(3,:) >xmax); % assuming if a=0 then b~=0
 edgeLine2d(1,horizontal) = 1;
-edgeLine2d(2,nonhorizontal) = round((-edgeLine(3,horizontal)-edgeLine(1,nonhorizontal)*1)./edgeLine(1,nonhorizontal));
-edgeLine2d(3,nonhorizontal) = xmax;
-edgeLine2d(4,nonhorizontal) = round((-edgeLine(3,horizontal)-edgeLine(1,nonhorizontal)*xmax)./edgeLine(1,nonhorizontal));
+edgeLine2d(2,horizontal) = round((-edgeLine(3,horizontal)-edgeLine(1,horizontal)*1)./edgeLine(1,horizontal));
+edgeLine2d(3,horizontal) = xmax;
+edgeLine2d(4,horizontal) = round((-edgeLine(3,horizontal)-edgeLine(1,horizontal)*xmax)./edgeLine(1,horizontal));
 
 % project points
 pts3d = pointsToWorld(cameraParams, mean(cameraParams.RotationMatrices,3),...
    mean(cameraParams.TranslationVectors,1), reshape(edgeLine2d,2,[])');
-shadowPlanePts = zero(9,N);
+shadowPlanePts = zeros(9,N);
 shadowPlanePts(1:2,:) = pts3d(1:2:2*N, :)';
 shadowPlanePts(4:5,:) = pts3d(2:2:2*N, :)';
 shadowPlanePts(7:9,:) = repmat(lightLoc,1,N);

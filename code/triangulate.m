@@ -15,16 +15,18 @@ N = size(object2dpts, 2);
 object3dpts = cell(1,N);
 camCenter = mean(cameraParams.TranslationVectors,1)'; %3x1
 for i = 1:N
-    rays = pointsToWorld(cameraParams, mean(cameraParams.RotationMatrices,3),...
-   mean(cameraParams.TranslationVectors,1), object2dpts{1,i}'); %Nx2
-    
-    K = size(rays,1);
-    pts3d = zeros(3, K);
-    for j = 1:K
-        pts3d(:,j) = linePlaneIntersection([rays(j,:)' camCenter],...
-            shadowPlanePts(:,i));
+    if size(object2dpts{1,i},2)~=0
+        rays = pointsToWorld(cameraParams, mean(cameraParams.RotationMatrices,3),...
+        mean(cameraParams.TranslationVectors,1), object2dpts{1,i}'); %Nx2
+        rays=[rays,zeros(size(rays,1),1)];
+        K = size(rays,1);
+        pts3d = zeros(3, K);
+        for j = 1:K
+            pts3d(:,j) = linePlaneIntersection([rays(j,:)' camCenter],...
+                reshape(shadowPlanePts(:,i),3,3));
+        end
+        object3dpts{1,i} = pts3d;
     end
-    object3dpts{1,i} = pts3d;
 end
 
 end

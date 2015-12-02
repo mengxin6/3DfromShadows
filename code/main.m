@@ -33,11 +33,15 @@ for i = 1:size(objectImagePaths, 2)
 end
 spatialEdge=findSpatialEdge(objectImages);
 edgeLine=edgeLineFitting(spatialEdge);
-objpts = getObjectPts(spatialEdge,edgeLine);
-shadowPlanePts = getShadowPlane(edgeLine, lightLoc, cameraParams, ...
+[imHeight,imWidth]=size(objectImages(:,:,1));
+margin=0.15;
+objpts = getObjectPts(spatialEdge,edgeLine,[imHeight*margin, ...
+    imHeight*(1-margin),imWidth*margin,imWidth*(1-margin)]);
+shadowPlanePts = getShadowPlane(edgeLine, lightLoc, camParams, ...
     size(objectImages,2), size(objectImages,1));
 % TODO: compute linear interpolation
-object3dpts = triangulate(object2dpts, shadowPlanePts, cameraParams);
+object3dpts = triangulate(objpts, shadowPlanePts, camParams);
+draw3dObject(object3dpts);
 
 
 %% Merge scans (if multiple scans were made)
