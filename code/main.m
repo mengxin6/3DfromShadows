@@ -17,6 +17,8 @@ end
 checkerSquareSizeInMM = 23;
 pencilLenInMM = 76;
 loadPtsFrom = '../data/sample/lightCalib';
+margin=0.15;
+
 
 %% Calibrate camera and desk plane
 % camParams: matlab cameraParameters structure
@@ -35,7 +37,6 @@ end
 spatialEdge=findSpatialEdge(objectImages);
 edgeLine=edgeLineFitting(spatialEdge);
 [imHeight,imWidth]=size(objectImages(:,:,1));
-margin=0.15;
 objpts = getObjectPts(spatialEdge,edgeLine,[imHeight*margin, ...
     imHeight*(1-margin),imWidth*margin,imWidth*(1-margin)]);
 shadowPlanePts = getShadowPlane(edgeLine, lightLoc, camParams, ...
