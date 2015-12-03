@@ -15,7 +15,8 @@ if nargin < 4
     idx = 1;
     for i = imNames
         f = figure(1);
-        J = undistortImage(imread(i{1}), cameraParams);
+%         J = undistortImage(imread(i{1}), cameraParams);
+        J= imread(i{1});
         imshow(J); title('Click on bottom of pencil and press enter')
         [bx, by] = getpts(f);
         b(idx,1) = bx(end); b(idx,2) = by(end);
@@ -24,7 +25,8 @@ if nargin < 4
     idx = 1;
     for i = imNames
         f = figure(1);
-        J = undistortImage(imread(i{1}), cameraParams);
+%         J = undistortImage(imread(i{1}), cameraParams);
+        J= imread(i{1});
         imshow(J); title('Click on top of shadow and press enter')
         [tsx, tsy] = getpts(f);
         ts(idx,1) = tsx(end); ts(idx,2) = tsy(end);

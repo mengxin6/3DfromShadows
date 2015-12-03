@@ -3,22 +3,47 @@
 % Carnegie Mellon University 
 
 %% Load data
-checkerImgNames = {'../data/sample/calibration/camera-calibration1.pgm', ...
-    '../data/sample/calibration/camera-calibration2.pgm'};
-lightImgNames = {'../data/sample/calibration/light-calibration1.pgm', ...
-    '../data/sample/calibration/light-calibration2.pgm',...
-    '../data/sample/calibration/light-calibration3.pgm',...
-    '../data/sample/calibration/light-calibration4.pgm'};
-    % objectImages: H x W x N matrix
+% checkerImgNames = {'../data/sample/calibration/camera-calibration1.pgm', ...
+%     '../data/sample/calibration/camera-calibration2.pgm'};
+% lightImgNames = {'../data/sample/calibration/light-calibration1.pgm', ...
+%     '../data/sample/calibration/light-calibration2.pgm',...
+%     '../data/sample/calibration/light-calibration3.pgm',...
+%     '../data/sample/calibration/light-calibration4.pgm'};
+%     % objectImages: H x W x N matrix
+% objectImagePaths=createObjectImagePaths();
+% for i=1:size(objectImagePaths,2)
+%     objectImages(:,:,i)=imread(objectImagePaths{1,i});
+% end    
+% checkerSquareSizeInMM = 23;
+% pencilLenInMM = 76;
+% loadPtsFrom = '../data/sample/lightCalib';
+% margin=0.15;
+
+checkerImgNames = {'../data/1202robolounge/camera/c1.jpg',...
+    '../data/1202robolounge/camera/c2.jpg',...
+    '../data/1202robolounge/camera/c3.jpg',...
+    '../data/1202robolounge/camera/c4.jpg'...
+    '../data/1202robolounge/camera/c5.jpg',...
+    '../data/1202robolounge/camera/c6.jpg',...
+    '../data/1202robolounge/camera/c7.jpg',...
+    '../data/1202robolounge/camera/c8.jpg'...
+    '../data/1202robolounge/camera/c9.jpg'};
+lightImgNames = {'../data/1202robolounge/light/l1.jpg',...
+    '../data/1202robolounge/light/l2.jpg',...
+    '../data/1202robolounge/light/l3.jpg',...
+    '../data/1202robolounge/light/l4.jpg',...
+    '../data/1202robolounge/light/l5.jpg'};
+% objectImages: H x W x N matrix
+objectImages = [];
 objectImagePaths=createObjectImagePaths();
 for i=1:size(objectImagePaths,2)
-    objectImages(:,:,i)=imread(objectImagePaths{1,i});
+%     objectImages(:,:,i)=imread(objectImagePaths{1,i});
+    objectImages(:,:,i)=rgb2gray(imread(objectImagePaths{1,i}));
 end    
 checkerSquareSizeInMM = 23;
-pencilLenInMM = 76;
-loadPtsFrom = '../data/sample/lightCalib';
-margin=0.15;
-
+pencilLenInMM = 141;
+% loadPtsFrom = '../data/sample/lightCalib';
+margin=0.15
 
 %% Calibrate camera and desk plane
 % camParams: matlab cameraParameters structure
@@ -28,7 +53,9 @@ margin=0.15;
 
 %% Calibrate light source location
 % lightLoc: 3x1 vector
-lightLoc = inferLightSourceLocation(lightImgNames, camParams, pencilLenInMM, loadPtsFrom);
+% lightLoc = inferLightSourceLocation(lightImgNames, camParams, pencilLenInMM, loadPtsFrom);
+lightLoc = inferLightSourceLocation(lightImgNames, camParams, pencilLenInMM);
+
 
 %% 3D from scan
 for i = 1:size(objectImagePaths, 2)

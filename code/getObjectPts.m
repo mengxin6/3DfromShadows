@@ -20,11 +20,12 @@ for i = 1:N
     mat = zeros(2,size(x,1));
     idx = 1;
     for j = 1:size(x,1)
-        if abs((edgeLine(:,i))'*[x(j); y(j); 1])/sqrt(sum(edgeLine(1:2,i).^2)) > TOL ...
-                && x(j)>RoI(1) && x(j)<RoI(2) && y(j)>RoI(3) && y(j)<RoI(4) % in RoI
+        % @Uncomment this after debugging is done
+%         if abs((edgeLine(:,i))'*[x(j); y(j); 1])/sqrt(sum(edgeLine(1:2,i).^2)) > TOL ...
+%                 && x(j)>RoI(1) && x(j)<RoI(2) && y(j)>RoI(3) && y(j)<RoI(4) % in RoI
             mat(:,idx) = [x(j); y(j)];
             idx = idx+1;
-        end
+%         end
     end
     if idx~=1
         objpts{1,i} = mat(:,1:idx-1);
