@@ -38,9 +38,9 @@ else
 end
 
 % Infer B, Ts in 3D
-B = pointsToWorld(cameraParams, camTrans, camRot, b);
+B = pointsToWorld(cameraParams, camRot, camTrans, b);
 B = [B zeros(N,1)];
-Ts = pointsToWorld(cameraParams, camTrans, camRot, ts);
+Ts = pointsToWorld(cameraParams, camRot, camTrans, ts);
 Ts = [Ts zeros(N,1)];
 
 % Infer T from pencil length

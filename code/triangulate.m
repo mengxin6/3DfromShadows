@@ -21,7 +21,7 @@ for i = 1:N
         K = size(rays,1);
         pts3d = zeros(3, K);
         for j = 1:K
-            pts3d(:,j) = linePlaneIntersection([rays(j,:)' camTrans],...
+            pts3d(:,j) = linePlaneIntersection([rays(j,:)' camTrans'],...
                 reshape(shadowPlanePts(:,i),3,3));
         end
         object3dpts{1,i} = pts3d;
