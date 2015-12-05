@@ -1,4 +1,4 @@
-function [shadowPlanePts] = getShadowPlane(edgeLine, lightLoc, cameraParams, xmax, ymax)
+function [shadowPlanePts] = getShadowPlane(edgeLine, lightLoc, cameraParams, camTrans, camRot, xmax, ymax)
 % Calculates the shadow plane by finding 2 3d points on the intersection of 
 % shadow plane and horizontal plane.
 % Input:
@@ -30,8 +30,8 @@ edgeLine2d(3,horizontal) = xmax;
 edgeLine2d(4,horizontal) = round((-edgeLine(3,horizontal)-edgeLine(1,horizontal)*xmax)./edgeLine(1,horizontal));
 
 % project points
-pts3d = pointsToWorld(cameraParams, mean(cameraParams.RotationMatrices,3),...
-   mean(cameraParams.TranslationVectors,1), reshape(edgeLine2d,2,[])');
+pts3d = pointsToWorld(cameraParams, camRot,...
+   camTrans, reshape(edgeLine2d,2,[])');
 shadowPlanePts = zeros(9,N);
 shadowPlanePts(1:2,:) = pts3d(1:2:2*N, :)';
 shadowPlanePts(4:5,:) = pts3d(2:2:2*N, :)';

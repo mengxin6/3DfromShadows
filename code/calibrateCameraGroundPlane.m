@@ -1,4 +1,4 @@
-function [camParams, horizontalPlane] = calibrateCameraGroundPlane(...
+function [camParams, camTrans, camRot] = calibrateCameraGroundPlane(...
     imNames, squareSizeInMM)
 % Input:
 %  imNames is a cell array containing a string that specifies the full path
@@ -25,13 +25,17 @@ camParams = estimateCameraParameters(imagePoints,worldPoints);
 % plot(camParams.ReprojectedPoints(:,1,1), camParams.ReprojectedPoints(:,2,1),'r+');
 % legend('Detected Points','ReprojectedPoints');
 % hold off;
+meanReprojError = reshape(mean(mean(camParams.ReprojectionErrors.^2,1),2),size(imNames,2),[]);
+[~,bestBoard] = min(meanReprojError);
+camTrans = camParams.TranslationVectors(bestBoard,:);
+camRot = camParams.RotationMatrices(:,:,bestBoard);
 
-%% Calculate the coordinate vector of the ground plane (plane of the checker
+% Calculate the coordinate vector of the ground plane (plane of the checker
 % board)
-A = [worldPoints(:,1)-mean(worldPoints(:,1)), worldPoints(:,2)-mean(worldPoints(:,2)), zeros(size(worldPoints,1),1)];
-[~,~,V]=svd(A,0);
-d = 0 - [worldPoints(1,:), 0]*V(:,end);
-horizontalPlane=vertcat(V(:,end), d);
+% A = [worldPoints(:,1)-mean(worldPoints(:,1)), worldPoints(:,2)-mean(worldPoints(:,2)), zeros(size(worldPoints,1),1)];
+% [~,~,V]=svd(A,0);
+% d = 0 - [worldPoints(1,:), 0]*V(:,end);
+% horizontalPlane=vertcat(V(:,end), d);
 
 end
 

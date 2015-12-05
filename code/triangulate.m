@@ -1,4 +1,4 @@
-function [object3dpts] = triangulate(object2dpts, shadowPlanePts, cameraParams)
+function [object3dpts] = triangulate(object2dpts, shadowPlanePts, cameraParams, camTrans, camRot)
 % Input:
 %  objpts: 1x(nframes-1) cell array, where cell i contains 2xKi matrix,
 %          denoting points on the image that are on the object to be
@@ -13,16 +13,15 @@ function [object3dpts] = triangulate(object2dpts, shadowPlanePts, cameraParams)
 
 N = size(object2dpts, 2);
 object3dpts = cell(1,N);
-camCenter = mean(cameraParams.TranslationVectors,1)'; %3x1
+% camCenter = mean(cameraParams.TranslationVectors,1)'; %3x1
 for i = 1:N
     if size(object2dpts{1,i},2)~=0
-        rays = pointsToWorld(cameraParams, mean(cameraParams.RotationMatrices,3),...
-        mean(cameraParams.TranslationVectors,1), object2dpts{1,i}'); %Nx2
+        rays = pointsToWorld(cameraParams, camRot, camTrans, object2dpts{1,i}'); %Nx2
         rays=[rays,zeros(size(rays,1),1)];
         K = size(rays,1);
         pts3d = zeros(3, K);
         for j = 1:K
-            pts3d(:,j) = linePlaneIntersection([rays(j,:)' camCenter],...
+            pts3d(:,j) = linePlaneIntersection([rays(j,:)' camTrans],...
                 reshape(shadowPlanePts(:,i),3,3));
         end
         object3dpts{1,i} = pts3d;

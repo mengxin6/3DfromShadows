@@ -1,6 +1,8 @@
 function objectImagePaths=createObjectImagePaths()
-objectImagePaths=cell(1,81);
-for n=1:81
+max = 166;
+min = 20;
+objectImagePaths=cell(1,max-min+1);
+for n=min:max
 %     objectImagePaths{1,n}=strcat('../data/sample/bottle/','bottle',num2str(n-1,'%03i'),'.pgm');
-    objectImagePaths{1,n}=strcat('../data/1202robolounge/duck6/',num2str(n),'.jpg');
+    objectImagePaths{1,n-min+1}=strcat('../data/1202night2/mug11/',num2str(n),'.jpg');
 end
