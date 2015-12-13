@@ -1,5 +1,5 @@
 function [objpts3d] = triangulate(objpts, shadowPlanePts, prevShadowPlane, ...
-        camParams, camTrans, camRot)
+        camParams, camTrans, camRot, camCenter)
 % Input:
 %  objpts: h x w double, non-zero value specifying the sub-frame time 
 %          between previous and current image that the shadow edge hit
@@ -46,7 +46,7 @@ rays = [rays, zeros(N,1)];
 % Triagulate by plane-line intersection
 objpts3d = zeros(3, N);
 for i = 1:N
-    objpts3d(:,i) = linePlaneIntersection([rays(i,:)' camTrans'], ...
+    objpts3d(:,i) = linePlaneIntersection([rays(i,:)' camCenter], ...
         interShadows(:,:,i));
 end
 

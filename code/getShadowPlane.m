@@ -16,11 +16,12 @@ function [shadowPlanePts] = getShadowPlane(spatialEdge, lightLoc, camParams, ...
 %  shadowPlanePts: 3x3 matrix, each column is [x,y,z]', a 3d point on the 
 %                  shadow plane
 
+topstart = 370;
 % @TODO: find two points that reliably gives the shadow line on image plane
 % Reliably, meaning fitting a line to a good amount of points towards the
 % top and bottom of the picture
-topx = 0; topy = 0;
-while topx == 0 && topy < size(spatialEdge,1)*0.5
+topx = 0; topy = topstart;
+while topx == 0 && topy < size(spatialEdge,1)
     topy = topy + 1;
     if sum(spatialEdge(topy,:)) > 0
         topx = max(find(spatialEdge(topy,:)>0));

@@ -1,5 +1,5 @@
 function draw3dObject(object3dpts)
-% object3dpts = object3dpts(:,object3dpts(3,:)>=0); %discard points below plane
+object3dpts = object3dpts(:,object3dpts(3,:)>=0); %discard points below plane
 
 % figure; 
 scatter3(object3dpts(1,:),object3dpts(2,:),object3dpts(3,:),'filled'); 

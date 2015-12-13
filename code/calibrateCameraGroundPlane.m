@@ -5,7 +5,8 @@ function [camParams, camTrans, camRot] = calibrateCameraGroundPlane(...
 %  to a image.
 % Output:
 %  camParams: matlab cameraParameters structure
-%  horizontalPlane: 4x1 vector
+%  camTrans: 1x3
+%  camRot: 3x3 matrix
 
 % imagePoints is an M-by-2-by-numImages array of x-y coordinates
 % boardSize specifies the checkerboard dimensions as [rows, cols] measured insquares.
