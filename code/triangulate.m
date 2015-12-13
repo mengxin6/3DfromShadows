@@ -1,5 +1,5 @@
-function [objpts3d] = triangulate(objpts, shadowPlanePts, prevShadowPlane, ...
-        camParams, camTrans, camRot, camCenter)
+function [objpts3d, colorpts] = triangulate(objpts, shadowPlanePts, prevShadowPlane, ...
+        camParams, camTrans, camRot, camCenter, firstImg)
 % Input:
 %  objpts: h x w double, non-zero value specifying the sub-frame time 
 %          between previous and current image that the shadow edge hit
@@ -12,8 +12,11 @@ function [objpts3d] = triangulate(objpts, shadowPlanePts, prevShadowPlane, ...
 %  camParams: MATLAB camera paramters structure 
 %  camTrans: camera translation vector
 %  camRot: camera rotation vector
+%  firstImg: h x w x 3 color image, the first frame of scene, used for
+%            coloring points
 % Output:
 %  objpts3d: 3xN matrix where each column specifies a 3D point
+%  colorpts: 3xN matrix where each column specifies the color of a 3D point
 
 % interpolate shadow plane
 [y, x] = find(objpts > 0 & objpts <= 1);
@@ -48,6 +51,11 @@ objpts3d = zeros(3, N);
 for i = 1:N
     objpts3d(:,i) = linePlaneIntersection([rays(i,:)' camCenter], ...
         interShadows(:,:,i));
+end
+
+colorpts = zeros(3, N);
+for i = 1:N
+    colorpts(:,i) = firstImg(y(i),x(i),:);
 end
 
 % figure;

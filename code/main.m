@@ -68,24 +68,29 @@ lightLoc = inferLightSourceLocation(lightImgNames, camParams, camTrans, camRot, 
 IcontrastMask = filterLowContrast(objectImages);
 Imiddle = getMiddleIntensity(objectImages);
 
+firstImg = im2double(imread(objectImagePaths{1,1}));
 prevIm = objectImages(:,:,1).*IcontrastMask;
 prevShadowPlane = [];
 object3dpts = [];
+objectcolor = [];
 for f = 2:size(objectImagePaths,2)
     curIm = objectImages(:,:,f).*IcontrastMask;
     spatialEdge = findSpatialEdge(prevIm-Imiddle, curIm-Imiddle);
     spatialEdge([1:topmargin, end-botmargin:end],:) = 0;
     objpts = spatialEdge;
     shadowPlanePts = getShadowPlane(spatialEdge, lightLoc, camParams, ...
-        camTrans, camRot, curIm);
-    object3dpts = [object3dpts triangulate(objpts, shadowPlanePts, prevShadowPlane, ...
-            camParams, camTrans, camRot, camCenter)];
+        camTrans, camRot);
+%         camTrans, camRot, curIm);
+    [tmp3dpts, colorpts] = triangulate(objpts, shadowPlanePts, prevShadowPlane, ...
+            camParams, camTrans, camRot, camCenter, firstImg);     
+    object3dpts = [object3dpts tmp3dpts];
+    objectcolor = [objectcolor colorpts];
    
     prevIm = curIm;
     prevShadowPlane = shadowPlanePts;
 
 end
-draw3dObject(object3dpts);
+draw3dObject(object3dpts,objectcolor);
 
 % spatialEdge=findSpatialEdge(objectImages);
 % edgeLine=edgeLineFitting(spatialEdge);
