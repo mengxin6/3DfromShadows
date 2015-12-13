@@ -35,6 +35,11 @@ else
         (ones(size(timevals))-timevals).*repmat(prevShadowPlane,1,1,N);
 end
 
+% scatter3(shadowPlanePts(1,:), shadowPlanePts(2,:), shadowPlanePts(3,:));
+% hold on
+% scatter3(prevShadowPlane(1,:), prevShadowPlane(2,:), prevShadowPlane(3,:));
+% scatter3(interShadows(1,:), interShadows(2,:), interShadows(3,:));
+
 rays = pointsToWorld(camParams, camRot, camTrans, [x y]);
 rays = [rays, zeros(N,1)];
 
@@ -44,4 +49,18 @@ for i = 1:N
     objpts3d(:,i) = linePlaneIntersection([rays(i,:)' camTrans'], ...
         interShadows(:,:,i));
 end
+
+% figure;
+% hold on
+% scatter3(camTrans(1), camTrans(2), camTrans(3))
+% zlabel('z')
+% for j = 1:size(rays,1)
+% 	line([rays(j,1) camTrans(1)],[rays(j,2) camTrans(2)], [rays(j,3) camTrans(3)]);
+% 	patch(interShadows(1,:,j), interShadows(2,:,j), interShadows(3,:,j),'y','FaceAlpha',0.5);
+% 	scatter3(objpts3d(1,j), objpts3d(2,j), objpts3d(3,j),'filled');
+% end
+
+
+
+
 end

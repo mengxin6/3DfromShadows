@@ -2,7 +2,11 @@
 % Author: Mengxin Li, Yi Hua
 % Carnegie Mellon University 
 
+
 clc; clear all;
+
+% addpath('/Users/hawaiii/Developer/TOOLBOX_calib');
+addpath('debug/');
 
 %% Load data
 checkerImgNames = {'../data/sample/calibration/camera-calibration1.pgm', ...
@@ -27,7 +31,6 @@ pencilLenInMM = 76;
 loadPtsFrom = '../data/sample/lightCalib.mat';
 margin=70;
 
-addpath('/Users/hawaiii/Developer/TOOLBOX_calib');
 %% Calibrate camera and desk plane
 % camParams: matlab cameraParameters structure
 % horizontalPlane: 4x1 vector
@@ -47,7 +50,7 @@ IcontrastMask = filterLowContrast(objectImages);
 Imiddle = getMiddleIntensity(objectImages);
 
 prevIm = objectImages(:,:,1).*IcontrastMask;
-prevShadowPlane = []; % TODO
+prevShadowPlane = [];
 object3dpts = [];
 for f = 2:size(objectImagePaths,2)
     curIm = objectImages(:,:,f).*IcontrastMask;
@@ -60,7 +63,8 @@ for f = 2:size(objectImagePaths,2)
             camParams, camTrans, camRot)];
    
     prevIm = curIm;
-%     prevShadowPlane = shadowPlanePts;
+    prevShadowPlane = shadowPlanePts;
+
 end
 draw3dObject(object3dpts);
 
