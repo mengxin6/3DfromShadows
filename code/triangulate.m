@@ -1,31 +1,47 @@
-function [object3dpts] = triangulate(object2dpts, shadowPlanePts, cameraParams, camTrans, camRot)
+function [objpts3d] = triangulate(objpts, shadowPlanePts, prevShadowPlane, ...
+        camParams, camTrans, camRot)
 % Input:
-%  objpts: 1x(nframes-1) cell array, where cell i contains 2xKi matrix,
-%          denoting points on the image that are on the object to be
-%          scanned.
-%  shadowPlanePts: 9x(nframes-1) matrix; each column is 
-%                  [x1 y1 z1 x2 y2 z2 lx ly lz] that specifies 3 points on 
-%                  the shadow plane
-%  cameraParms: a cameraParams structure returned by matlab
+%  objpts: h x w double, non-zero value specifying the sub-frame time 
+%          between previous and current image that the shadow edge hit
+%          this pixel (0: no shadow, (0,1): sometime between previous
+%          and current frame, 1: current frame)
+%  shadowPlanePts: 3x3 matrix containg 3 3D points on the current shadow
+%                  plane (in column)
+%  prevShadowPlane: similar to shadowPlanePts, but specifies the shadow
+%                   plane in the previous frame
+%  camParams: MATLAB camera paramters structure 
+%  camTrans: camera translation vector
+%  camRot: camera rotation vector
 % Output:
-%  object3dpts: 1x(nframes-1) cell array, where cell i contains 3xKi matrix,
-%               denoting 3d points on the object to be scanned.
+%  objpts3d: 3xN matrix where each column specifies a 3D point
 
-N = size(object2dpts, 2);
-object3dpts = cell(1,N);
-% camCenter = mean(cameraParams.TranslationVectors,1)'; %3x1
-for i = 1:N
-    if size(object2dpts{1,i},2)~=0
-        rays = pointsToWorld(cameraParams, camRot, camTrans, object2dpts{1,i}'); %Nx2
-        rays=[rays,zeros(size(rays,1),1)];
-        K = size(rays,1);
-        pts3d = zeros(3, K);
-        for j = 1:K
-            pts3d(:,j) = linePlaneIntersection([rays(j,:)' camTrans'],...
-                reshape(shadowPlanePts(:,i),3,3));
-        end
-        object3dpts{1,i} = pts3d;
-    end
+% interpolate shadow plane
+[y, x] = find(objpts > 0 & objpts <= 1);
+N = size(y,1);
+
+if size(shadowPlanePts,1) ~= 3
+    objpts3d = [];
+    return;
 end
 
+if size(prevShadowPlane, 1) < 3 % prevShadowPlane might be empty
+    interShadows = repmat(shadowPlanePts, 1, 1, N);
+else
+    timevals = zeros(3,3,N);
+    for i = 1:N
+        timevals(:,:,i) = objpts(y(i),x(i));
+    end
+    interShadows = timevals.*repmat(shadowPlanePts,1,1,N) + ...
+        (ones(size(timevals))-timevals).*repmat(prevShadowPlane,1,1,N);
+end
+
+rays = pointsToWorld(camParams, camRot, camTrans, [x y]);
+rays = [rays, zeros(N,1)];
+
+% Triagulate by plane-line intersection
+objpts3d = zeros(3, N);
+for i = 1:N
+    objpts3d(:,i) = linePlaneIntersection([rays(i,:)' camTrans'], ...
+        interShadows(:,:,i));
+end
 end

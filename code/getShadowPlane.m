@@ -1,40 +1,47 @@
-function [shadowPlanePts] = getShadowPlane(edgeLine, lightLoc, cameraParams, camTrans, camRot, xmax, ymax)
-% Calculates the shadow plane by finding 2 3d points on the intersection of 
-% shadow plane and horizontal plane.
+function [shadowPlanePts] = getShadowPlane(spatialEdge, lightLoc, camParams, ...
+    camTrans, camRot)
+% Computes the three points on the shadow plane on current frame, by
+% fitting a line to the spatialEdge and projecting selected points to 3D.
 % Input:
-%  edgeLine: 3xn matrix where n is the number of frames from the scan;
-%              each column is [a b c]' that specifies line ax+by+c=0
-%  lightLoc: 3x1 vector specifying the location of light source
-%  cameraParams: a camera parameter structure
-%  xmax: size of scan image in horizontal dimension
+%  spatialEdge: h x w array containing [0,1] values; 0 means no shadow 
+%               edge hitting this pixel; (0,1] meaning shadow edge hit this
+%               pixel between sometime between previous frame and current
+%               frame
+%  lightLoc: 3x1 vector specifying the location of the light source
+%  camParams: a camera parameter structure
+%  camTrans: camera translation vector
+%  camRot: camera rotation vector
 % Output:
-%  shadowPlanePts: 9xn matrix where n is the number of frames from the
-%                  scan; each column is [x1 y1 z1 x2 y2 z2 lx ly lz] that 
-%                  specifies 3 points on the shadow plane
+%  shadowPlanePts: 3x3 matrix, each column is [x,y,z]', a 3d point on the 
+%                  shadow plane
 
-N = size(edgeLine,2);
-edgeLine2d = zeros(4,N);
-% find intersection of this line with the image boarder
-% intersecting with top & bottom boarder
-nonhorizontal = edgeLine(1,:)~=0;
-edgeLine2d(1,nonhorizontal) = round((-edgeLine(3,nonhorizontal)-edgeLine(2,nonhorizontal)*1)./edgeLine(1,nonhorizontal));
-edgeLine2d(2,nonhorizontal) = 1;
-edgeLine2d(3,nonhorizontal) = round((-edgeLine(3,nonhorizontal)-edgeLine(2,nonhorizontal)*ymax)./edgeLine(1,nonhorizontal));
-edgeLine2d(4,nonhorizontal) = ymax;
-% intersecting with right & left boarder
-horizontal = (edgeLine(1,:)==0 | edgeLine2d(1,:)<1 | edgeLine2d(1,:)>xmax ...
-    | edgeLine2d(3,:) < 1 | edgeLine2d(3,:) >xmax); % assuming if a=0 then b~=0
-edgeLine2d(1,horizontal) = 1;
-edgeLine2d(2,horizontal) = round((-edgeLine(3,horizontal)-edgeLine(1,horizontal)*1)./edgeLine(1,horizontal));
-edgeLine2d(3,horizontal) = xmax;
-edgeLine2d(4,horizontal) = round((-edgeLine(3,horizontal)-edgeLine(1,horizontal)*xmax)./edgeLine(1,horizontal));
+% @TODO: find two points that reliably gives the shadow line on image plane
+% Reliably, meaning fitting a line to a good amount of points towards the
+% top and bottom of the picture
+topx = 0; topy = 0;
+while topx == 0 && topy < size(spatialEdge,1)*0.5
+    topy = topy + 1;
+    if sum(spatialEdge(topy,:)) > 0
+        topx = max(find(spatialEdge(topy,:)>0));
+    end
+end
+botx = 0; boty = size(spatialEdge,1)+1;
+while botx == 0 && boty > size(spatialEdge,1)*0.5
+    boty = boty - 1;
+    if sum(spatialEdge(boty,:)) > 0
+        botx = max(find(spatialEdge(boty,:)>0));
+    end
+end
 
-% project points
-pts3d = pointsToWorld(cameraParams, camRot,...
-   camTrans, reshape(edgeLine2d,2,[])');
-shadowPlanePts = zeros(9,N);
-shadowPlanePts(1:2,:) = pts3d(1:2:2*N, :)';
-shadowPlanePts(4:5,:) = pts3d(2:2:2*N, :)';
-shadowPlanePts(7:9,:) = repmat(lightLoc,1,N);
+if topx == 0 || botx == 0
+    shadowPlanePts = [];
+    return;
+end
 
+% Project (topx, topy), (botx, boty) to 3D
+linepts = [topx, topy; botx, boty];
+linepts3d = pointsToWorld(camParams, camRot, camTrans, linepts);
+
+shadowPlanePts = [vertcat(linepts3d', zeros(1,2)), lightLoc];
+   
 end
