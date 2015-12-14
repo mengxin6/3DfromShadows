@@ -3,9 +3,7 @@
 % Carnegie Mellon University 
 
 clc; clear all;
-
-% addpath('/Users/hawaiii/Developer/TOOLBOX_calib');
-addpath('debug/');
+% addpath('debug/');
 
 %% Load data
 % checkerImgNames = {'../data/1202night2/camera/c5.jpg',...
@@ -27,7 +25,6 @@ nmin = 1;
 objectImagePaths=cell(1,nmax-nmin+1);
 for n=nmin:nmax
       objectImagePaths{1,n-nmin+1}=strcat('../data/1202night2/mug32/',num2str(n),'.jpg');
-%     objectImagePaths{1,n-nmin+1}=strcat('../data/1202night2/mug32_u/',num2str(n),'_rect.jpg');
 end
 objectImages = [];
 for i=1:size(objectImagePaths,2)
@@ -61,9 +58,6 @@ lightLoc = inferLightSourceLocation(lightImgNames, camParams, camTrans, camRot, 
     pencilLenInMM, loadPtsFrom,0);
 
 %% 3D from scan
-% for i = 1:size(objectImagePaths, 2)
-%     objectImages(:,:,i) = undistortImage(objectImages(:,:,i), camParams);
-% end
 IcontrastMask = filterLowContrast(objectImages);
 Imiddle = getMiddleIntensity(objectImages);
 
@@ -90,18 +84,3 @@ for f = 2:size(objectImagePaths,2)
 
 end
 draw3dObject(object3dpts,objectcolor);
-
-% spatialEdge=findSpatialEdge(objectImages);
-% edgeLine=edgeLineFitting(spatialEdge);
-% [imHeight,imWidth]=size(objectImages(:,:,1));
-% objpts = getObjectPts(spatialEdge,edgeLine,[imHeight*margin, ...
-%     imHeight*(1-margin),imWidth*margin,imWidth*(1-margin)]);
-% shadowPlanePts = getShadowPlane(edgeLine, lightLoc, camParams, camTrans, camRot, ...
-%     size(objectImages,2), size(objectImages,1));
-% % TODO: compute linear interpolation
-% object3dpts = triangulate(objpts, shadowPlanePts, camParams, camTrans, camRot);
-% draw3dObject(object3dpts);
-
-
-%% Merge scans (if multiple scans were made)
-% TODO

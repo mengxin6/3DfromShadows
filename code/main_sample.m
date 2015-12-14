@@ -6,7 +6,7 @@
 clc; clear all;
 
 % addpath('/Users/hawaiii/Developer/TOOLBOX_calib');
-addpath('debug/');
+% addpath('debug/');
 
 %% Load data
 checkerImgNames = {'../data/sample/calibration/camera-calibration1.pgm', ...
@@ -67,18 +67,6 @@ for f = 2:size(objectImagePaths,2)
 
 end
 draw3dObject(object3dpts);
-
-% spatialEdge=findSpatialEdge(objectImages);
-% edgeLine=edgeLineFitting(spatialEdge);
-% [imHeight,imWidth]=size(objectImages(:,:,1));
-% objpts = getObjectPts(spatialEdge,edgeLine,[imHeight*margin, ...
-%     imHeight*(1-margin),imWidth*margin,imWidth*(1-margin)]);
-% shadowPlanePts = getShadowPlane(edgeLine, lightLoc, camParams, camTrans, camRot, ...
-%     size(objectImages,2), size(objectImages,1));
-% % TODO: compute linear interpolation
-% object3dpts = triangulate(objpts, shadowPlanePts, camParams, camTrans, camRot);
-% draw3dObject(object3dpts);
-
 
 %% Merge scans (if multiple scans were made)
 % TODO
