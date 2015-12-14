@@ -1,5 +1,5 @@
 function [shadowPlanePts] = getShadowPlane(spatialEdge, lightLoc, camParams, ...
-    camTrans, camRot, curImg)
+    camTrans, camRot, topstart, curImg)
 % Computes the three points on the shadow plane on current frame, by
 % fitting a line to the spatialEdge and projecting selected points to 3D.
 % Input:
@@ -16,7 +16,6 @@ function [shadowPlanePts] = getShadowPlane(spatialEdge, lightLoc, camParams, ...
 %  shadowPlanePts: 3x3 matrix, each column is [x,y,z]', a 3d point on the 
 %                  shadow plane
 
-topstart = 370;
 % @TODO: find two points that reliably gives the shadow line on image plane
 % Reliably, meaning fitting a line to a good amount of points towards the
 % top and bottom of the picture
@@ -35,7 +34,7 @@ while botx == 0 && boty > topy
     end
 end
 
-if nargin > 5 % debug
+if nargin > 6 % debug
     plotLineFit(imfuse(spatialEdge,curImg), topx, topy, botx, boty);
 end
 
